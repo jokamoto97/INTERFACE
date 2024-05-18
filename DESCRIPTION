@@ -1,7 +1,7 @@
 Package: ISUSIE
 Type: Package
-Title: Probabilistic causal gene fine-mapping through integration of TWAS and
-colocalization analysis.
+Title: Probabilistic causal gene fine-mapping through integration of TWAS and 
+    colocalization analysis.
 Version: 0.1.0
 Authors@R: c(person("Jeffrey Okamoto", role = c("aut", "cre"),
                      email = "jokamoto@umich.edu",
@@ -10,16 +10,17 @@ Authors@R: c(person("Jeffrey Okamoto", role = c("aut", "cre"),
                      email = "xwen@umich.edu",
                      comment=c(ORCID = "0000-0001-8990-2737")))
 Description: This package performs causal gene fine-mapping for a genomic region
-    through integration of colocalization probabilities from colocalization 
-    analysis and transcriptome-wide association study (TWAS)
-    scan summary statistics. The probabilistic framework implemented in this 
-    package can be used for implication of causal genes as well as estimation
-    of their effect sizes.
+    through integration of colocalization probabilities from colocalization
+    analysis and transcriptome-wide association study (TWAS) scan summary 
+    statistics. The probabilistic framework implemented in this package can be 
+    used for implication of causal genes as well as estimation of their effect 
+    sizes.
 Depends: 
     R (>= 4.3.0)
 Imports: 
     stats,
-    susieR
+    susieR,
+    Rfast
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.2.3

@@ -1,0 +1,203 @@
+---
+title: "ISUSIE: Probabilistic Fine-mapping of Causal Genes"
+shorttitle: "ISUSIE"
+author:
+- name: Jeffrey Okamoto
+  affiliation: 
+  - &id Department of Biostatistics, University of Michigan
+  email: jokamoto@umich.edu
+- name: Xiaoquan Wen
+  email: xwen@umich.edu
+  affiliation: *id
+abstract: >
+  This package performs causal gene fine-mapping for a genomic region
+    through integration of colocalization probabilities from colocalization
+    analysis and transcriptome-wide association study (TWAS) scan summary 
+    statistics. The probabilistic framework implemented in this package can be 
+    used for implication of causal genes as well as estimation of their effect 
+    sizes.
+package: ISUSIE
+output: 
+  BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{ISUSIE: Probabilistic Fine-mapping of Causal Genes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}  
+toc_float: true
+---
+
+# Installation
+
+To install this package, run the following code chunk (in R 4.3 or later):
+
+```{r,eval=FALSE}
+library(devtools)
+devtools::install_github("jokamoto97/ISUSIE")
+```
+
+# Methodology Reference
+
+For a comprehensive description of the probabilistic framework behind ISUSIE 
+please refer to: 
+
+Manuscript in progress
+
+# Introduction
+
+Integrative genetic association methods have shown great promise in post-GWAS
+(genome-wide association study) analyses, in which one of the most challenging 
+tasks is identifying putative causal genes and uncovering molecular mechanisms 
+of complex traits. Prevailing computational approaches include 
+transcriptome-wide association studies (TWASs) and colocalization analysis. 
+TWASs aim to assess the correlation between predicted gene expression of a 
+target gene and a GWAS trait. Common output for TWASs include gene-level 
+z-statistics. Colocalization analysis attempts to determine whether genetic 
+variants that are causal for a molecular phenotype (such as gene expression) 
+overlap with variants that are causal for a GWAS trait. Common output for 
+colocalization analysis often include gene-level colocalization probabilities,
+which provide evidence regarding whether there exists a colocalized variant 
+for the expression of a target gene and GWAS trait. Causal gene fine-mapping 
+methods have recently emerged as an effective means of identifying causal
+genes by jointly modeling multiple proximal genes and variants simulteneously. 
+However, these techniques rely on the assumption of a prior distribution for 
+gene effects, and it remains unclear how the prior specification impacts the 
+quality of inference. We propose integration of transcriptome-wide association 
+studies and colocalization-sum of single effects (ISuSiE), a method for causal 
+gene fine-mapping and effect estimation that efficiently estimates informative 
+priors. 
+
+# Included Data Sets
+
+To demonstrate the functionality of the `ISUSIE` package, we include several 
+simulated datasets. See the methodology reference for a thorough description of 
+the simulation design. Briefly, we simulate gene expression and GWAS trait 
+levels for 706 individuals in a 13Mb region containing 39 proximal genes.
+We perform TWAS and colocalization analysis on the simulated data. The 
+region genotype and GWAS trait data is included in `sbams`, while predicted 
+expression levels for the 39 genes are included in `pred_expr`.
+
+Before performing causal gene fine-mapping, we must 
+estimate a TWAS prior $\pi$ as well as the gene priors, variant prior, and null 
+weight parameter. We include the datasets `twas_z`, `grcp`, `p1_p12`, and 
+`n_cis` todemonstrate this procedure. 
+
+After deriving the priors and null weight, we can perform causal gene 
+fine-mapping. We include the datasets `gene_priors`, `p1_p12`, `sbams`,
+`pred_expr`, and `null_wt` to show how this is done.
+
+# Estimation of the TWAS prior $\pi$
+
+To estimate the TWAS prior, we consider genes across the entire simulated 
+dataset (not just genes within the region of interest for causal gene 
+fine-mapping). The dataset `twas_z` contains the the TWAS z-scores for all
+23,400 genes in the simulation. To estimate the TWAS prior, we use the function
+`pi1_fun`:
+
+```{r}
+library(ISUSIE)
+data(twas_z)
+
+ISUSIE::pi1_fun(z_vec = twas_z)
+```
+
+For general use, we recommend using all genes across the transcriptome to 
+estimate the TWAS prior. 
+
+# Estimation of the gene and variant priors
+
+We estimate the gene priors and variant prior as a function of the gene-level
+colocalization probabilities for the genes in the region of interest `grcp`,
+the colocalization prior enrichment parameter estimates `p1_p12`, and the 
+number of cis variants for each gene in the region of interest `n_cis`. 
+For general use, we recommend using the GRCPs and prior parameters p1 and p12 
+from fastENLOC colocalization analysis, but the user is free to specify 
+alternate gene-level colocalization probabilities or priors if desired.
+
+We directly use p1 (the first entry in the 2-vector `p1_p12`) as the variant 
+prior. We compute the gene priors using the function `isusie_priors`:
+
+```{r}
+data(grcp)
+data(twas_pi1)
+data(p1_p12)
+data(n_cis)
+
+#Variant prior:
+
+print(p1_p12[1])
+
+#Gene priors:
+
+ISUSIE::isusie_priors(GRCP_vec = grcp, p12 = p1_p12[2],TWAS_pi = twas_pi1,
+                      n_cis = n_cis)
+
+```
+
+# Estimation of the null weight 
+
+To derive the null weight (the prior probability of no variant or gene effects),
+we utilize the `isusie_null_wt` function:
+
+```{r}
+data(sbams)
+
+ISUSIE::isusie_null_wt(p1 = p1_p12[1], p12 = p1_p12[2], 
+                       n_region_snps=(nrow(sbams)-1))
+```
+
+The `n_region_snps` argument is the total number of variants in the region of
+interest for causal gene fine-mapping.
+
+# Causal gene fine-mapping
+
+Now that we have our gene priors, variant prior, and null weight, we are ready
+for causal gene fine-mapping. To run ISuSiE, we use the `isusie` function.
+
+```{r}
+data(pred_expr)
+data(gene_priors)
+data(null_wt)
+
+#Pre-processing of sbams file and predicted expression matrix:
+
+snp <- sbams$V2[2:nrow(sbams)]
+G <- t(sbams[2:nrow(sbams),4:ncol(sbams)])
+colnames(G) <- snp
+Y = as.numeric(sbams[1,4:709])
+
+#ISuSiE fit:
+
+rst <- ISUSIE::isusie(Y = Y, 
+                      PE = pred_expr, 
+                      G = G, 
+                      p_gene = gene_priors,
+                      p_snp = p1_p12[1],
+                      null_wt = null_wt)
+
+```
+
+A preview of the output is shown below. The output contains the variable 
+(gene or variant) name, as well as the variable's posterior inclusion 
+probability (PIP), posterior effect, and posterior standard deviation.
+The first 39 rows above correspond to the genes in the region, while the 
+remaining ~27,000 rows provide the variant info.
+
+```{r,echo=F}
+print(head(rst,n=40))
+```
+
+# Fine-mapping multiple regions 
+
+The `isusie` function is designed to perform causal gene fine-mapping for one
+genomic region at a time, but there are various ways to fine-map multiple 
+regions simultaneously using additional tools. For example, [openmp_wrapper](https://github.com/xqwen/openmp_wrapper) can be used to 
+analyze multiple regions in parallel. For the simulation and real data analysis
+in the methodology reference, we make use of a high-performance computing 
+cluster to expedite the fine-mapping procedure.
+
+
+Session information is included below:
+
+```{r}
+sessionInfo()
+```

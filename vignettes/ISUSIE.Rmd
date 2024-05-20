@@ -110,7 +110,7 @@ colocalization probabilities for the genes in the region of interest `grcp`,
 the colocalization prior enrichment parameter estimates `p1_p12`, and the 
 number of cis variants for each gene in the region of interest `n_cis`. 
 For general use, we recommend using the GRCPs and prior parameters p1 and p12 
-from fastENLOC colocalization analysis, but the user is free to specify 
+from [fastENLOC](https://github.com/xqwen/fastenloc) colocalization analysis, but the user is free to specify 
 alternate gene-level colocalization probabilities or priors if desired.
 
 We directly use p1 (the first entry in the 2-vector `p1_p12`) as the variant 

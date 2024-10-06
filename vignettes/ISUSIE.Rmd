@@ -1,6 +1,6 @@
 ---
-title: "ISUSIE: Probabilistic Fine-mapping of Causal Genes"
-shorttitle: "ISUSIE"
+title: "INTERFACE: Probabilistic Fine-mapping of Causal Genes"
+shorttitle: "INTERFACE"
 author:
 - name: Jeffrey Okamoto
   affiliation: 
@@ -16,11 +16,11 @@ abstract: >
     statistics. The probabilistic framework implemented in this package can be 
     used for implication of causal genes as well as estimation of their effect 
     sizes.
-package: ISUSIE
+package: INTERFACE
 output: 
   BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{ISUSIE: Probabilistic Fine-mapping of Causal Genes}
+  %\VignetteIndexEntry{INTERFACE: Probabilistic Fine-mapping of Causal Genes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
 toc_float: true
@@ -32,12 +32,12 @@ To install this package, run the following code chunk (in R 4.3 or later):
 
 ```{r,eval=FALSE}
 library(devtools)
-devtools::install_github("jokamoto97/ISUSIE")
+devtools::install_github("jokamoto97/INTERFACE")
 ```
 
 # Methodology Reference
 
-For a comprehensive description of the probabilistic framework behind ISUSIE 
+For a comprehensive description of the probabilistic framework behind INTERFACE 
 please refer to: 
 
 Manuscript in progress
@@ -62,13 +62,13 @@ genes by jointly modeling multiple proximal genes and variants simulteneously.
 However, these techniques rely on the assumption of a prior distribution for 
 gene effects, and it remains unclear how the prior specification impacts the 
 quality of inference. We propose integration of transcriptome-wide association 
-studies and colocalization-sum of single effects (ISuSiE), a method for causal 
-gene fine-mapping and effect estimation that efficiently estimates informative 
-priors. 
+studies and colocalization-sum of single effects (INTERFACE), a method for 
+causal gene fine-mapping and effect estimation that efficiently estimates 
+informative priors. 
 
 # Included Data Sets
 
-To demonstrate the functionality of the `ISUSIE` package, we include several 
+To demonstrate the functionality of the `INTERFACE` package, we include several 
 simulated datasets. See the methodology reference for a thorough description of 
 the simulation design. Briefly, we simulate gene expression and GWAS trait 
 levels for 706 individuals in a 13Mb region containing 39 proximal genes.
@@ -94,10 +94,10 @@ fine-mapping). The dataset `twas_z` contains the the TWAS z-scores for all
 `pi1_fun`:
 
 ```{r}
-library(ISUSIE)
+library(INTERFACE)
 data(twas_z)
 
-ISUSIE::pi1_fun(z_vec = twas_z)
+INTERFACE::pi1_fun(z_vec = twas_z)
 ```
 
 For general use, we recommend using all genes across the transcriptome to 
@@ -114,7 +114,7 @@ from [fastENLOC](https://github.com/xqwen/fastenloc) colocalization analysis, bu
 alternate gene-level colocalization probabilities or priors if desired.
 
 We directly use p1 (the first entry in the 2-vector `p1_p12`) as the variant 
-prior. We compute the gene priors using the function `isusie_priors`:
+prior. We compute the gene priors using the function `interface_priors`:
 
 ```{r}
 data(grcp)
@@ -128,7 +128,7 @@ print(p1_p12[1])
 
 #Gene priors:
 
-ISUSIE::isusie_priors(GRCP_vec = grcp, p12 = p1_p12[2],TWAS_pi = twas_pi1,
+INTERFACE::interface_priors(GRCP_vec = grcp, p12 = p1_p12[2],TWAS_pi = twas_pi1,
                       n_cis = n_cis)
 
 ```
@@ -136,12 +136,12 @@ ISUSIE::isusie_priors(GRCP_vec = grcp, p12 = p1_p12[2],TWAS_pi = twas_pi1,
 # Estimation of the null weight 
 
 To derive the null weight (the prior probability of no variant or gene effects),
-we utilize the `isusie_null_wt` function:
+we utilize the `interface_null_wt` function:
 
 ```{r}
 data(sbams)
 
-ISUSIE::isusie_null_wt(p1 = p1_p12[1], p12 = p1_p12[2], 
+INTERFACE::interface_null_wt(p1 = p1_p12[1], p12 = p1_p12[2], 
                        n_region_snps=(nrow(sbams)-1))
 ```
 
@@ -151,7 +151,7 @@ interest for causal gene fine-mapping.
 # Causal gene fine-mapping
 
 Now that we have our gene priors, variant prior, and null weight, we are ready
-for causal gene fine-mapping. To run ISuSiE, we use the `isusie` function.
+for causal gene fine-mapping. To run INTERFACE, we use the `interface` function.
 
 ```{r}
 data(pred_expr)
@@ -165,9 +165,9 @@ G <- t(sbams[2:nrow(sbams),4:ncol(sbams)])
 colnames(G) <- snp
 Y = as.numeric(sbams[1,4:709])
 
-#ISuSiE fit:
+#INTERFACE fit:
 
-rst <- ISUSIE::isusie(Y = Y, 
+rst <- INTERFACE::interface(Y = Y, 
                       PE = pred_expr, 
                       G = G, 
                       p_gene = gene_priors,
@@ -188,7 +188,7 @@ print(head(rst,n=40))
 
 # Fine-mapping multiple regions 
 
-The `isusie` function is designed to perform causal gene fine-mapping for one
+The `interface` function is designed to perform causal gene fine-mapping for one
 genomic region at a time, but there are various ways to fine-map multiple 
 regions simultaneously using additional tools. For example, [openmp_wrapper](https://github.com/xqwen/openmp_wrapper) can be used to 
 analyze multiple regions in parallel. For the simulation and real data analysis

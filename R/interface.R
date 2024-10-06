@@ -1,4 +1,4 @@
-#' Perform probabilistic causal gene fine-mapping with ISuSiE.
+#' Perform probabilistic causal gene fine-mapping with INTERFACE.
 #'
 #' @param Y An n-vector of GWAS trait measurements for n individuals.
 #' @param PE A (n x k) dataframe with predicted expression levels for n
@@ -7,12 +7,13 @@
 #' @param G A (n x p) dataframe with measured genotypes for n individuals at
 #' k variants. The order of rows should match Y. Column names should uniquely
 #' identify the corresponding variant.
-#' @param p_gene A k-vector of gene priors. We recommend using the isusie_priors
-#' function to estimate these. The order should match the columns of PE.
+#' @param p_gene A k-vector of gene priors. We recommend using the
+#' interface_priors function to estimate these. The order should match the
+#' columns of PE.
 #' @param p_snp A scalar variant prior. We recommend using the fastENLOC p1
 #' parameter for this quantity.
 #' @param null_wt A scalar for the null weight. We recommend estimating this
-#' parameter using the isusie_null_wt function.
+#' parameter using the interface_null_wt function.
 #' @param L An upper bound for the number of causal genes or variants in the
 #' region of interest.
 #' @return A four-column data frame containing the variable (variant or gene),
@@ -32,10 +33,10 @@
 #' G <- t(sbams[2:nrow(sbams),4:ncol(sbams)])
 #' colnames(G) <- snp
 #' Y = as.numeric(sbams[1,4:709])
-#' isusie(Y = Y, PE = pred_expr, G = G, p_gene = gene_priors, p_snp = p1_p12[1],null_wt = null_wt)
+#' interface(Y = Y, PE = pred_expr, G = G, p_gene = gene_priors, p_snp = p1_p12[1],null_wt = null_wt)
 
 
-isusie <- function(Y, PE, G, p_gene, p_snp, L = 10, null_wt){
+interface <- function(Y, PE, G, p_gene, p_snp, L = 10, null_wt){
 
   #Make covariate matrix
 

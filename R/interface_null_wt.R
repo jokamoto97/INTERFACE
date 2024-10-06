@@ -14,9 +14,9 @@
 #' data(p1_p12)
 #' data(sbams)
 #'
-#' isusie_null_wt(p1 = p1_p12[1], p12 = p1_p12[2],n_region_snps=(nrow(sbams)-1))
+#' interface_null_wt(p1 = p1_p12[1], p12 = p1_p12[2],n_region_snps=(nrow(sbams)-1))
 
-isusie_null_wt <- function(p1, p12, n_region_snps){
+interface_null_wt <- function(p1, p12, n_region_snps){
 
   p_gwas = p1 + p12
 

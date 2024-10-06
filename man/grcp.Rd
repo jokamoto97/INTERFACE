@@ -16,7 +16,7 @@ A 39-vector.
 \description{
 A numeric 39-vector containing gene-level colocalization probabilities
 generated from the fastENLOC method. This data is included to demonstrate the
-usage of the isusie_priors function.
+usage of the interface_priors function.
 }
 \examples{
 data(grcp)

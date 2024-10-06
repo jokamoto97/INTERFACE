@@ -17,10 +17,10 @@
 #' data(twas_pi1)
 #' data(grcp)
 #' data(n_cis)
-#' isusie_priors(GRCP_vec = grcp, p12 = p1_p12[2],TWAS_pi = twas_pi1,
+#' interface_priors(GRCP_vec = grcp, p12 = p1_p12[2],TWAS_pi = twas_pi1,
 #' n_cis = n_cis)
 
-isusie_priors <- function(GRCP_vec, p12, TWAS_pi, n_cis){
+interface_priors <- function(GRCP_vec, p12, TWAS_pi, n_cis){
 
   p_gene_tmp <- 1-(1-p12)^n_cis
 

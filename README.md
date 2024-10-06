@@ -1,13 +1,13 @@
-# ISuSiE
-Integration of TWAS and colocalization Sum of Single Effects (ISuSiE) is a 
-package for probabilistic causal gene fine-mapping.
+# INTERFACE
+INTEgRative Fine mApping Causal gEnes (INTERFACE) is a 
+package for probabilistic causal gene fine-mapping through integration of colocalization and TWAS analyses.
 
 
 ## Installing
 
 ```
 library(devtools)
-devtools::install_github("jokamoto97/ISUSIE")
+devtools::install_github("jokamoto97/INTERFACE")
 ```
 
 ## Causal Gene Fine-mapping

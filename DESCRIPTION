@@ -1,4 +1,4 @@
-Package: ISUSIE
+Package: INTERFACE
 Type: Package
 Title: Probabilistic causal gene fine-mapping through integration of TWAS and 
     colocalization analysis.
@@ -29,7 +29,7 @@ Suggests:
     BiocStyle,
     knitr,
     rmarkdown
-BugReports: https://github.com/jokamoto97/ISUSIE/issues
-URL: https://github.com/jokamoto97/ISUSIE
+BugReports: https://github.com/jokamoto97/INTERFACE/issues
+URL: https://github.com/jokamoto97/INTERFACE
 LazyData: false
 

@@ -3,7 +3,7 @@
 \docType{data}
 \name{null_wt}
 \alias{null_wt}
-\title{Null weight for ISuSiE fine-mapping analysis.}
+\title{Null weight for INTERFACE fine-mapping analysis.}
 \format{
 A scalar.
 }
@@ -14,8 +14,8 @@ null_wt
 A scalar.
 }
 \description{
-A scalar null weight to be used as an argument in the isusie function. The
-null weight can be derived using the isusie_null_wt function.
+A scalar null weight to be used as an argument in the interface function. The
+null weight can be derived using the interface_null_wt function.
 }
 \examples{
 data(null_wt)
